@@ -1,15 +1,11 @@
 import SmoothScroll from "@/components/SmoothScroll";
-import Hero from "@/components/Hero";
-import HowItWorks from "@/components/HowItWorks";
-import TrustSection from "@/components/TrustSection";
+import ProductDemo from "@/components/ProductDemo";
 
 const Index = () => {
   return (
     <SmoothScroll>
       <div className="min-h-screen">
-        <Hero />
-        <HowItWorks />
-        <TrustSection />
+        <ProductDemo />
       </div>
     </SmoothScroll>
   );
