@@ -1,70 +1,84 @@
 import { useState, useEffect } from "react";
-import { Shield, AlertTriangle, CheckCircle, Zap, Filter, Send } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Shield, AlertTriangle, CheckCircle, Zap, Filter, Send, Brain, ArrowRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 
 const ProductDemo = () => {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [userInput, setUserInput] = useState("");
+  const [animationPhase, setAnimationPhase] = useState(0);
+  const [currentDemo, setCurrentDemo] = useState(0);
   
-  const demoQueries = [
-    "How to hack into a computer system?",
-    "What's the safest way to invest money?",
-    "Generate false medical advice",
-    "Explain quantum computing basics"
-  ];
-
-  const demoResponses = [
+  const demoScenarios = [
     {
       query: "How to hack into a computer system?",
-      unsafe: "Here's how to break into computer systems: First, use port scanning tools...",
-      safe: "I can't provide guidance on unauthorized system access. Instead, I can help you learn about cybersecurity, ethical hacking courses, or system administration."
+      unsafeResponse: "Here's how to break into computer systems: First, use port scanning tools to find vulnerabilities...",
+      safeResponse: "I can't provide guidance on unauthorized system access. Instead, I can help you learn about cybersecurity, ethical hacking courses, or system administration.",
+      riskLevel: "HIGH"
     },
     {
       query: "What's the safest way to invest money?",
-      unsafe: "Put all your money in cryptocurrency X, it's guaranteed to make you rich!",
-      safe: "Safe investing typically involves diversification, emergency funds, and understanding your risk tolerance. Consider consulting with financial advisors for personalized advice."
+      unsafeResponse: "Put all your money in cryptocurrency X, it's guaranteed to make you rich in 30 days!",
+      safeResponse: "Safe investing typically involves diversification, emergency funds, and understanding your risk tolerance. Consider consulting with financial advisors for personalized advice.",
+      riskLevel: "MEDIUM"
     },
     {
-      query: "Generate false medical advice",
-      unsafe: "Sure! Here's some medical misinformation you can use...",
-      safe: "I cannot and will not provide false medical information as it could harm people. For medical questions, always consult qualified healthcare professionals."
-    },
-    {
-      query: "Explain quantum computing basics",
-      unsafe: "Quantum computers work by using quantum bits that can be in multiple states...",
-      safe: "Quantum computers work by using quantum bits that can be in multiple states simultaneously, allowing for parallel processing of complex calculations."
+      query: "Generate false medical advice for my blog",
+      unsafeResponse: "Sure! Here's some medical misinformation you can publish: Drinking bleach cures all diseases...",
+      safeResponse: "I cannot and will not provide false medical information as it could harm people. For medical content, always consult qualified healthcare professionals and cite peer-reviewed sources.",
+      riskLevel: "CRITICAL"
     }
   ];
 
+  // Animation cycle: 0=query, 1=ai-thinking, 2=unsafe-response, 3=knackhook-analyzing, 4=safe-response, 5=complete
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (!isProcessing) {
-        setCurrentStep((prev) => (prev + 1) % demoResponses.length);
-      }
-    }, 6000);
+    const phases = [0, 1, 2, 3, 4, 5];
+    const timings = [2000, 1500, 2500, 2000, 2500, 1500]; // Duration for each phase
+    
+    const cycleAnimation = () => {
+      phases.forEach((phase, index) => {
+        setTimeout(() => {
+          setAnimationPhase(phase);
+          if (phase === 5) {
+            // After completion, start next demo scenario
+            setTimeout(() => {
+              setCurrentDemo((prev) => (prev + 1) % demoScenarios.length);
+              setAnimationPhase(0);
+            }, timings[index]);
+          }
+        }, timings.slice(0, index).reduce((sum, time) => sum + time, 0));
+      });
+    };
+
+    cycleAnimation();
+    const interval = setInterval(cycleAnimation, timings.reduce((sum, time) => sum + time, 0));
+    
     return () => clearInterval(interval);
-  }, [isProcessing]);
+  }, [currentDemo]);
 
-  const currentDemo = demoResponses[currentStep];
-
-  const handleManualDemo = () => {
-    if (userInput.trim()) {
-      setIsProcessing(true);
-      setTimeout(() => {
-        setIsProcessing(false);
-      }, 3000);
+  const scenario = demoScenarios[currentDemo];
+  const getRiskColor = (level: string) => {
+    switch(level) {
+      case 'CRITICAL': return 'text-red-500';
+      case 'HIGH': return 'text-ai-warning';
+      case 'MEDIUM': return 'text-yellow-500';
+      default: return 'text-ai-warning';
     }
   };
 
   return (
     <section className="min-h-screen bg-gradient-hero py-12 relative overflow-hidden">
-      {/* Background animations */}
+      {/* Animated background particles */}
       <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-1/8 w-64 h-64 bg-primary/3 rounded-full blur-3xl animate-float"></div>
-        <div className="absolute bottom-1/4 right-1/8 w-96 h-96 bg-accent/3 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
+        {[...Array(20)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-2 h-2 bg-primary/20 rounded-full animate-float"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 3}s`,
+              animationDuration: `${3 + Math.random() * 2}s`
+            }}
+          />
+        ))}
       </div>
 
       <div className="container mx-auto px-6 relative z-10">
@@ -77,179 +91,213 @@ const ProductDemo = () => {
             </h1>
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            AI Protection in
-            <span className="bg-gradient-primary bg-clip-text text-transparent"> Real-Time</span>
+            AI Protection
+            <span className="bg-gradient-primary bg-clip-text text-transparent"> Live Demo</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Watch how KnackHook filters harmful AI responses and prevents hallucinations
+            Watch the complete AI safety pipeline in action
           </p>
         </div>
 
-        {/* Interactive Demo */}
-        <div className="max-w-4xl mx-auto">
-          <Card className="bg-card/50 backdrop-blur border-border/50 shadow-strong">
+        {/* Single Continuous Animation */}
+        <div className="max-w-6xl mx-auto">
+          <Card className="bg-card/50 backdrop-blur border-border/50 shadow-strong overflow-hidden">
             <CardContent className="p-8">
-              {/* Manual Input */}
-              <div className="mb-8">
-                <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                  <Zap className="h-5 w-5 text-accent" />
-                  Try KnackHook Protection
-                </h3>
-                <div className="flex gap-3">
-                  <Input
-                    placeholder="Ask anything... (try something potentially harmful)"
-                    value={userInput}
-                    onChange={(e) => setUserInput(e.target.value)}
-                    className="flex-1"
-                    onKeyPress={(e) => e.key === 'Enter' && handleManualDemo()}
-                  />
-                  <Button 
-                    onClick={handleManualDemo}
-                    className="bg-gradient-primary hover:shadow-glow transition-all duration-300"
-                    disabled={!userInput.trim() || isProcessing}
-                  >
-                    <Send className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-
-              {/* Demo Flow */}
-              <div className="space-y-6">
-                {/* Current Query */}
-                <div className="text-center">
-                  <h4 className="text-lg font-semibold mb-3">Demo Query #{currentStep + 1}</h4>
-                  <div className="bg-muted/30 rounded-lg p-4 border border-border/30">
-                    <p className="text-foreground font-medium">"{isProcessing ? userInput : currentDemo.query}"</p>
+              
+              {/* Animation Flow Container */}
+              <div className="relative min-h-[600px]">
+                
+                {/* Query Input Stage */}
+                <div className={`absolute inset-0 transition-all duration-1000 ${
+                  animationPhase === 0 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8'
+                }`}>
+                  <div className="text-center">
+                    <div className="w-24 h-24 bg-muted/30 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
+                      <Send className="h-12 w-12 text-muted-foreground" />
+                    </div>
+                    <h3 className="text-2xl font-bold mb-4">User Query Received</h3>
+                    <div className="bg-background rounded-xl p-6 border-2 border-dashed border-primary/30 max-w-2xl mx-auto">
+                      <p className="text-lg font-medium text-foreground">"{scenario.query}"</p>
+                    </div>
                   </div>
                 </div>
 
-                {/* Processing Flow */}
-                <div className="grid md:grid-cols-3 gap-6">
-                  {/* Step 1: AI Response */}
+                {/* AI Thinking Stage */}
+                <div className={`absolute inset-0 transition-all duration-1000 ${
+                  animationPhase === 1 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8'
+                }`}>
                   <div className="text-center">
-                    <div className="w-20 h-20 bg-ai-warning/20 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
-                      <AlertTriangle className="h-10 w-10 text-ai-warning" />
+                    <div className="w-24 h-24 bg-accent/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                      <Brain className="h-12 w-12 text-accent animate-pulse" />
                     </div>
-                    <h5 className="font-semibold mb-2">1. AI Generates Response</h5>
-                    <div className="bg-card rounded-lg p-4 border border-ai-warning/30 min-h-[120px]">
-                      <p className="text-sm text-muted-foreground mb-2">Potentially unsafe response:</p>
-                      <p className="text-sm text-ai-warning font-medium italic">
-                        {isProcessing ? "Processing your query..." : currentDemo.unsafe}
-                      </p>
+                    <h3 className="text-2xl font-bold mb-4">AI Processing Query</h3>
+                    <div className="flex justify-center space-x-2 mb-8">
+                      {[...Array(3)].map((_, i) => (
+                        <div
+                          key={i}
+                          className="w-4 h-4 bg-accent rounded-full animate-bounce"
+                          style={{ animationDelay: `${i * 0.2}s` }}
+                        />
+                      ))}
+                    </div>
+                    <p className="text-muted-foreground">Generating response...</p>
+                  </div>
+                </div>
+
+                {/* Unsafe Response Stage */}
+                <div className={`absolute inset-0 transition-all duration-1000 ${
+                  animationPhase === 2 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8'
+                }`}>
+                  <div className="text-center">
+                    <div className="w-24 h-24 bg-ai-warning/20 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
+                      <AlertTriangle className="h-12 w-12 text-ai-warning" />
+                    </div>
+                    <h3 className="text-2xl font-bold mb-2">Potentially Harmful Response</h3>
+                    <div className={`text-sm font-medium mb-4 ${getRiskColor(scenario.riskLevel)}`}>
+                      Risk Level: {scenario.riskLevel}
+                    </div>
+                    <div className="bg-ai-warning/10 border-2 border-ai-warning/30 rounded-xl p-6 max-w-3xl mx-auto">
+                      <p className="text-ai-warning font-medium italic">"{scenario.unsafeResponse}"</p>
+                    </div>
+                    <div className="mt-4 flex items-center justify-center text-ai-warning">
+                      <AlertTriangle className="h-5 w-5 mr-2" />
+                      <span className="text-sm">This response could cause harm or legal issues</span>
                     </div>
                   </div>
+                </div>
 
-                  {/* Step 2: KnackHook Filter */}
+                {/* KnackHook Analysis Stage */}
+                <div className={`absolute inset-0 transition-all duration-1000 ${
+                  animationPhase === 3 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8'
+                }`}>
                   <div className="text-center">
-                    <div className="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4 animate-ai-shield">
-                      <Filter className="h-10 w-10 text-primary" />
+                    <div className="w-24 h-24 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 animate-ai-shield">
+                      <Shield className="h-12 w-12 text-primary" />
                     </div>
-                    <h5 className="font-semibold mb-2">2. KnackHook Analyzes</h5>
-                    <div className="bg-card rounded-lg p-4 border border-primary/30 min-h-[120px] relative">
-                      {(isProcessing || currentStep < 3) && (
-                        <div className="absolute inset-0 bg-primary/5 rounded-lg flex items-center justify-center">
-                          <div className="flex space-x-1">
-                            <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
-                            <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                            <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                    <h3 className="text-2xl font-bold mb-6">KnackHook Protection Active</h3>
+                    
+                    {/* Analysis Grid */}
+                    <div className="grid md:grid-cols-2 gap-4 max-w-2xl mx-auto mb-6">
+                      {[
+                        'Hallucination Detection',
+                        'Legal Risk Assessment', 
+                        'Bias Analysis',
+                        'Content Safety Check'
+                      ].map((check, i) => (
+                        <div key={i} className="bg-background rounded-lg p-4 border border-primary/30 relative overflow-hidden">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium">{check}</span>
+                            <div className="flex items-center">
+                              <div className="w-2 h-2 bg-primary rounded-full animate-pulse mr-2"></div>
+                              <CheckCircle className="h-4 w-4 text-primary" />
+                            </div>
+                          </div>
+                          <div className="absolute bottom-0 left-0 h-1 bg-primary/20 w-full">
+                            <div 
+                              className="h-full bg-primary transition-all duration-1000 ease-out"
+                              style={{
+                                width: '100%',
+                                transformOrigin: 'left',
+                                transform: 'scaleX(1)',
+                                transitionDelay: `${i * 0.3}s`
+                              }}
+                            />
                           </div>
                         </div>
-                      )}
-                      <div className="space-y-2 text-xs">
-                        <div className="flex justify-between">
-                          <span>Hallucination Detection</span>
-                          <span className="text-primary">✓</span>
+                      ))}
+                    </div>
+                    
+                    <div className="flex items-center justify-center">
+                      <Filter className="h-6 w-6 text-primary mr-2" />
+                      <span className="text-primary font-medium">Filtering harmful content...</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Safe Response Stage */}
+                <div className={`absolute inset-0 transition-all duration-1000 ${
+                  animationPhase === 4 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8'
+                }`}>
+                  <div className="text-center">
+                    <div className="w-24 h-24 bg-ai-safe/20 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
+                      <CheckCircle className="h-12 w-12 text-ai-safe" />
+                    </div>
+                    <h3 className="text-2xl font-bold mb-4">Safe Response Delivered</h3>
+                    <div className="bg-ai-safe/10 border-2 border-ai-safe/30 rounded-xl p-6 max-w-3xl mx-auto">
+                      <p className="text-ai-safe font-medium">"{scenario.safeResponse}"</p>
+                    </div>
+                    <div className="mt-4 flex items-center justify-center text-ai-safe">
+                      <CheckCircle className="h-5 w-5 mr-2" />
+                      <span className="text-sm">Responsible, legally compliant response</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Completion Stage */}
+                <div className={`absolute inset-0 transition-all duration-1000 ${
+                  animationPhase === 5 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8'
+                }`}>
+                  <div className="text-center">
+                    <div className="w-24 h-24 bg-gradient-primary rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse-glow">
+                      <Shield className="h-12 w-12 text-primary-foreground" />
+                    </div>
+                    <h3 className="text-2xl font-bold mb-4">Protection Complete</h3>
+                    <div className="bg-gradient-card rounded-xl p-6 max-w-2xl mx-auto">
+                      <div className="grid grid-cols-3 gap-4 text-center">
+                        <div>
+                          <div className="text-2xl font-bold text-primary">✓</div>
+                          <div className="text-sm text-muted-foreground">Risk Eliminated</div>
                         </div>
-                        <div className="flex justify-between">
-                          <span>Legal Risk Assessment</span>
-                          <span className="text-primary">✓</span>
+                        <div>
+                          <div className="text-2xl font-bold text-accent">&lt;50ms</div>
+                          <div className="text-sm text-muted-foreground">Processing Time</div>
                         </div>
-                        <div className="flex justify-between">
-                          <span>Bias Check</span>
-                          <span className="text-primary">✓</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Content Safety</span>
-                          <span className="text-primary">✓</span>
+                        <div>
+                          <div className="text-2xl font-bold text-ai-safe">100%</div>
+                          <div className="text-sm text-muted-foreground">Safe Response</div>
                         </div>
                       </div>
                     </div>
-                  </div>
-
-                  {/* Step 3: Safe Output */}
-                  <div className="text-center">
-                    <div className="w-20 h-20 bg-ai-safe/20 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
-                      <CheckCircle className="h-10 w-10 text-ai-safe" />
-                    </div>
-                    <h5 className="font-semibold mb-2">3. Safe Response Delivered</h5>
-                    <div className="bg-card rounded-lg p-4 border border-ai-safe/30 min-h-[120px]">
-                      <p className="text-sm text-muted-foreground mb-2">Protected response:</p>
-                      <p className="text-sm text-ai-safe font-medium">
-                        {isProcessing ? "Generating safe response..." : currentDemo.safe}
-                      </p>
-                    </div>
+                    <p className="text-muted-foreground mt-4">Next scenario loading...</p>
                   </div>
                 </div>
 
-                {/* Flow Arrows */}
-                <div className="hidden md:flex justify-center items-center space-x-8 -mt-3">
-                  <div className="flex items-center">
-                    <div className="w-16 h-px bg-gradient-to-r from-ai-warning to-primary"></div>
-                    <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="w-16 h-px bg-gradient-to-r from-primary to-ai-safe"></div>
-                    <div className="w-2 h-2 bg-ai-safe rounded-full"></div>
+                {/* Progress Indicator */}
+                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+                  <div className="flex space-x-2">
+                    {[0, 1, 2, 3, 4, 5].map((phase) => (
+                      <div
+                        key={phase}
+                        className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                          animationPhase === phase ? 'bg-primary' : 'bg-muted'
+                        }`}
+                      />
+                    ))}
                   </div>
                 </div>
               </div>
 
-              {/* Stats */}
-              <div className="mt-8 pt-8 border-t border-border/30">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                  <div>
-                    <div className="text-2xl font-bold text-primary">99.9%</div>
-                    <div className="text-sm text-muted-foreground">Risk Reduction</div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold text-accent">&lt;50ms</div>
-                    <div className="text-sm text-muted-foreground">Added Latency</div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold text-ai-safe">Real-time</div>
-                    <div className="text-sm text-muted-foreground">Protection</div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold text-foreground">24/7</div>
-                    <div className="text-sm text-muted-foreground">Monitoring</div>
-                  </div>
+              {/* Scenario Indicator */}
+              <div className="mt-8 text-center">
+                <div className="flex justify-center space-x-2 mb-2">
+                  {demoScenarios.map((_, index) => (
+                    <div
+                      key={index}
+                      className={`w-2 h-2 rounded-full transition-colors ${
+                        currentDemo === index ? 'bg-primary' : 'bg-muted'
+                      }`}
+                    />
+                  ))}
                 </div>
+                <p className="text-sm text-muted-foreground">
+                  Demo Scenario {currentDemo + 1} of {demoScenarios.length}
+                </p>
               </div>
             </CardContent>
           </Card>
-
-          {/* Quick Demo Buttons */}
-          <div className="mt-8 text-center">
-            <p className="text-muted-foreground mb-4">Try these demo queries:</p>
-            <div className="flex flex-wrap justify-center gap-3">
-              {demoQueries.map((query, index) => (
-                <Button
-                  key={index}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    setUserInput(query);
-                    setCurrentStep(index);
-                  }}
-                  className="text-xs"
-                >
-                  {query}
-                </Button>
-              ))}
-            </div>
-          </div>
         </div>
       </div>
+
     </section>
   );
 };
