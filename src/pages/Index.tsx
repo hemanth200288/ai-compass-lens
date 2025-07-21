@@ -1,5 +1,5 @@
 import SmoothScroll from "@/components/SmoothScroll";
-import ProductDemo from "@/components/ProductDemo";
+import { ProductDemo } from "@/components/ProductDemo";
 
 const Index = () => {
   return (
