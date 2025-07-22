@@ -42,14 +42,6 @@ All colors MUST be HSL.
     --ai-safe: 160 100% 35%;
     --ai-warning: 35 100% 50%;
     --ai-neutral: 210 15% 85%;
-    
-    /* Neural Network Vibrant Colors */
-    --neural-safe: 120 100% 50%;
-    --neural-warning: 45 100% 55%;
-    --neural-danger: 0 100% 60%;
-    --neural-processing: 200 100% 55%;
-    --neural-knackhook: 280 100% 60%;
-    --neural-flow: 310 100% 50%;
 
     /* Beautiful gradients */
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
@@ -119,14 +111,6 @@ All colors MUST be HSL.
     --ai-safe: 160 100% 45%;
     --ai-warning: 35 100% 60%;
     --ai-neutral: 210 15% 25%;
-    
-    /* Dark Neural Network Colors */
-    --neural-safe: 120 100% 60%;
-    --neural-warning: 45 100% 65%;
-    --neural-danger: 0 100% 70%;
-    --neural-processing: 200 100% 65%;
-    --neural-knackhook: 280 100% 70%;
-    --neural-flow: 310 100% 60%;
 
     /* Dark gradients */
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
