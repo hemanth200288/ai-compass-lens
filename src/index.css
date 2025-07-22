@@ -38,21 +38,28 @@ All colors MUST be HSL.
     --input: 210 20% 92%;
     --ring: 210 100% 45%;
 
-    /* AI Safety theme colors */
+    /* Futuristic AI theme colors */
     --ai-safe: 160 100% 35%;
     --ai-warning: 35 100% 50%;
     --ai-neutral: 210 15% 85%;
+    --terminal-green: 120 100% 50%;
+    --neon-blue: 210 100% 60%;
+    --neon-purple: 270 100% 65%;
+    --cyber-orange: 30 100% 60%;
 
-    /* Beautiful gradients */
+    /* Futuristic gradients */
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
     --gradient-hero: linear-gradient(135deg, hsl(var(--primary) / 0.05), hsl(var(--accent) / 0.05));
     --gradient-card: linear-gradient(145deg, hsl(var(--background)), hsl(var(--secondary)));
+    --gradient-terminal: linear-gradient(135deg, hsl(0 0% 5%), hsl(120 100% 5%));
+    --gradient-cyber: linear-gradient(45deg, hsl(210 100% 60% / 0.1), hsl(270 100% 65% / 0.1));
 
-    /* Elegant shadows */
+    /* Glowing shadows */
     --shadow-soft: 0 4px 20px hsl(var(--primary) / 0.08);
     --shadow-medium: 0 8px 25px hsl(var(--primary) / 0.12);
     --shadow-strong: 0 15px 35px hsl(var(--primary) / 0.15);
     --shadow-glow: 0 0 30px hsl(var(--primary-glow) / 0.3);
+    --shadow-neon: 0 0 20px hsl(var(--terminal-green) / 0.5);
 
     /* Smooth transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -140,5 +147,83 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  /* Terminal styling */
+  .terminal {
+    @apply bg-black text-terminal-green font-mono border border-terminal-green/30;
+    box-shadow: var(--shadow-neon);
+  }
+  
+  .terminal-cursor {
+    animation: blink 1s infinite;
+  }
+  
+  /* Navigation arrows */
+  .nav-arrow {
+    @apply bg-gradient-to-r from-neon-blue to-neon-purple text-white;
+    box-shadow: 0 0 20px hsl(var(--neon-blue) / 0.5);
+    transition: var(--transition-smooth);
+  }
+  
+  .nav-arrow:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 30px hsl(var(--neon-blue) / 0.8);
+  }
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { 
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
+  }
+  50% { 
+    box-shadow: 0 0 40px hsl(var(--primary) / 0.6);
+  }
+}
+
+@keyframes ai-shield {
+  0%, 100% { 
+    transform: rotate(0deg);
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
+  }
+  50% { 
+    transform: rotate(5deg);
+    box-shadow: 0 0 40px hsl(var(--primary) / 0.6);
+  }
+}
+
+@keyframes terminal-scan {
+  0% { transform: translateX(-100%); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+
+@layer utilities {
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+  
+  .animate-ai-shield {
+    animation: ai-shield 2s ease-in-out infinite;
+  }
+  
+  .animate-terminal-scan {
+    animation: terminal-scan 2s ease-in-out infinite;
   }
 }
