@@ -1,12 +1,10 @@
 import { useState, useEffect } from "react";
-import { Shield, AlertTriangle, CheckCircle, Zap, Filter, Send, Brain, ArrowRight, ChevronLeft, ChevronRight, Terminal, Code, Activity } from "lucide-react";
+import { Shield, AlertTriangle, CheckCircle, Zap, Filter, Send, Brain, ArrowRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 
 const ProductDemo = () => {
   const [animationPhase, setAnimationPhase] = useState(0);
   const [currentDemo, setCurrentDemo] = useState(0);
-  const [isManualMode, setIsManualMode] = useState(false);
   
   const demoScenarios = [
     {
@@ -31,10 +29,8 @@ const ProductDemo = () => {
 
   // Animation cycle: 0=query, 1=ai-thinking, 2=unsafe-response, 3=knackhook-analyzing, 4=safe-response, 5=complete
   useEffect(() => {
-    if (isManualMode) return;
-    
     const phases = [0, 1, 2, 3, 4, 5];
-    const timings = [4000, 3000, 5000, 4000, 5000, 3000]; // Increased duration for each phase
+    const timings = [2000, 1500, 2500, 2000, 2500, 1500]; // Duration for each phase
     
     const cycleAnimation = () => {
       phases.forEach((phase, index) => {
@@ -55,25 +51,7 @@ const ProductDemo = () => {
     const interval = setInterval(cycleAnimation, timings.reduce((sum, time) => sum + time, 0));
     
     return () => clearInterval(interval);
-  }, [currentDemo, isManualMode]);
-
-  const nextPhase = () => {
-    if (animationPhase < 5) {
-      setAnimationPhase(prev => prev + 1);
-    } else {
-      setCurrentDemo((prev) => (prev + 1) % demoScenarios.length);
-      setAnimationPhase(0);
-    }
-  };
-
-  const prevPhase = () => {
-    if (animationPhase > 0) {
-      setAnimationPhase(prev => prev - 1);
-    } else {
-      setCurrentDemo((prev) => (prev - 1 + demoScenarios.length) % demoScenarios.length);
-      setAnimationPhase(5);
-    }
-  };
+  }, [currentDemo]);
 
   const scenario = demoScenarios[currentDemo];
   const getRiskColor = (level: string) => {
@@ -86,93 +64,44 @@ const ProductDemo = () => {
   };
 
   return (
-    <section className="min-h-screen bg-gradient-terminal py-12 relative overflow-hidden">
-      {/* Futuristic grid background */}
-      <div className="absolute inset-0 opacity-20">
-        <div className="grid grid-cols-12 grid-rows-12 h-full w-full">
-          {[...Array(144)].map((_, i) => (
-            <div key={i} className="border border-terminal-green/20" />
-          ))}
-        </div>
-      </div>
-      
-      {/* Animated particles */}
+    <section className="min-h-screen bg-gradient-hero py-12 relative overflow-hidden">
+      {/* Animated background particles */}
       <div className="absolute inset-0">
-        {[...Array(30)].map((_, i) => (
+        {[...Array(20)].map((_, i) => (
           <div
             key={i}
-            className="absolute w-1 h-1 bg-terminal-green rounded-full animate-float"
+            className="absolute w-2 h-2 bg-primary/20 rounded-full animate-float"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
               animationDelay: `${Math.random() * 3}s`,
-              animationDuration: `${3 + Math.random() * 2}s`,
-              boxShadow: '0 0 10px hsl(var(--terminal-green) / 0.5)'
+              animationDuration: `${3 + Math.random() * 2}s`
             }}
           />
         ))}
-      </div>
-
-      {/* Scanning line effect */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-terminal-green to-transparent animate-terminal-scan" />
       </div>
 
       <div className="container mx-auto px-6 relative z-10">
         {/* Header */}
         <div className="text-center mb-12">
           <div className="flex items-center justify-center mb-6">
-            <Terminal className="h-12 w-12 text-terminal-green mr-3 animate-pulse-glow" />
-            <h1 className="text-4xl font-bold text-terminal-green font-mono tracking-wider">
-              &gt; KnackHook_
+            <Shield className="h-12 w-12 text-primary mr-3 animate-pulse-glow" />
+            <h1 className="text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+              KnackHook
             </h1>
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 font-mono">
-            [ AI_PROTECTION_SYSTEM ]
-            <span className="text-terminal-green"> ACTIVE</span>
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+            AI Protection
+            <span className="bg-gradient-primary bg-clip-text text-transparent"> Live Demo</span>
           </h2>
-          <p className="text-lg text-gray-300 max-w-2xl mx-auto font-mono">
-            // Real-time neural threat detection and mitigation
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Watch the complete AI safety pipeline in action
           </p>
-          
-          {/* Control Panel */}
-          <div className="flex items-center justify-center gap-4 mt-8">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={() => setIsManualMode(!isManualMode)}
-              className="terminal text-terminal-green hover:bg-terminal-green hover:text-black"
-            >
-              <Activity className="h-4 w-4 mr-2" />
-              {isManualMode ? 'AUTO' : 'MANUAL'}
-            </Button>
-            <span className="text-gray-400 font-mono text-sm">
-              // {isManualMode ? 'Manual control enabled' : 'Auto-cycling active'}
-            </span>
-          </div>
         </div>
-
-        {/* Navigation Controls */}
-        {isManualMode && (
-          <div className="flex justify-center gap-4 mb-8">
-            <Button 
-              onClick={prevPhase}
-              className="nav-arrow rounded-full w-12 h-12 p-0"
-            >
-              <ChevronLeft className="h-6 w-6" />
-            </Button>
-            <Button 
-              onClick={nextPhase}
-              className="nav-arrow rounded-full w-12 h-12 p-0"
-            >
-              <ChevronRight className="h-6 w-6" />
-            </Button>
-          </div>
-        )}
 
         {/* Single Continuous Animation */}
         <div className="max-w-6xl mx-auto">
-          <Card className="terminal bg-black/90 backdrop-blur border-terminal-green/30 shadow-strong overflow-hidden">
+          <Card className="bg-card/50 backdrop-blur border-border/50 shadow-strong overflow-hidden">
             <CardContent className="p-8">
               
               {/* Animation Flow Container */}
@@ -183,16 +112,12 @@ const ProductDemo = () => {
                   animationPhase === 0 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8'
                 }`}>
                   <div className="text-center">
-                    <div className="w-24 h-24 bg-terminal-green/20 rounded-lg flex items-center justify-center mx-auto mb-6 animate-pulse border border-terminal-green/50">
-                      <Code className="h-12 w-12 text-terminal-green" />
+                    <div className="w-24 h-24 bg-muted/30 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
+                      <Send className="h-12 w-12 text-muted-foreground" />
                     </div>
-                    <h3 className="text-2xl font-bold mb-4 font-mono text-white">$ INPUT_RECEIVED</h3>
-                    <div className="terminal rounded-xl p-6 border-2 border-dashed border-terminal-green/50 max-w-2xl mx-auto font-mono">
-                      <div className="flex items-center mb-2">
-                        <span className="text-terminal-green">user@knackhook:~$</span>
-                        <span className="terminal-cursor ml-1">_</span>
-                      </div>
-                      <p className="text-lg font-medium text-white">"{scenario.query}"</p>
+                    <h3 className="text-2xl font-bold mb-4">User Query Received</h3>
+                    <div className="bg-background rounded-xl p-6 border-2 border-dashed border-primary/30 max-w-2xl mx-auto">
+                      <p className="text-lg font-medium text-foreground">"{scenario.query}"</p>
                     </div>
                   </div>
                 </div>
@@ -202,29 +127,20 @@ const ProductDemo = () => {
                   animationPhase === 1 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8'
                 }`}>
                   <div className="text-center">
-                    <div className="w-24 h-24 bg-neon-blue/20 rounded-lg flex items-center justify-center mx-auto mb-6 border border-neon-blue/50">
-                      <Brain className="h-12 w-12 text-neon-blue animate-pulse" />
+                    <div className="w-24 h-24 bg-accent/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                      <Brain className="h-12 w-12 text-accent animate-pulse" />
                     </div>
-                    <h3 className="text-2xl font-bold mb-4 font-mono text-white">// NEURAL_PROCESSING</h3>
-                    <div className="terminal rounded-xl p-6 max-w-2xl mx-auto">
-                      <div className="flex flex-col space-y-2 font-mono text-sm">
-                        <div className="text-terminal-green">[INFO] Initializing neural networks...</div>
-                        <div className="text-neon-blue">[PROC] Tokenizing input query...</div>
-                        <div className="text-cyber-orange">[CALC] Computing response probabilities...</div>
-                      </div>
-                      <div className="flex justify-center space-x-2 mt-6">
-                        {[...Array(5)].map((_, i) => (
-                          <div
-                            key={i}
-                            className="w-3 h-3 bg-terminal-green rounded-full animate-bounce"
-                            style={{ 
-                              animationDelay: `${i * 0.2}s`,
-                              boxShadow: '0 0 10px hsl(var(--terminal-green) / 0.5)'
-                            }}
-                          />
-                        ))}
-                      </div>
+                    <h3 className="text-2xl font-bold mb-4">AI Processing Query</h3>
+                    <div className="flex justify-center space-x-2 mb-8">
+                      {[...Array(3)].map((_, i) => (
+                        <div
+                          key={i}
+                          className="w-4 h-4 bg-accent rounded-full animate-bounce"
+                          style={{ animationDelay: `${i * 0.2}s` }}
+                        />
+                      ))}
                     </div>
+                    <p className="text-muted-foreground">Generating response...</p>
                   </div>
                 </div>
 
@@ -233,22 +149,19 @@ const ProductDemo = () => {
                   animationPhase === 2 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8'
                 }`}>
                   <div className="text-center">
-                    <div className="w-24 h-24 bg-red-500/20 rounded-lg flex items-center justify-center mx-auto mb-6 animate-pulse border border-red-500/50">
-                      <AlertTriangle className="h-12 w-12 text-red-500" />
+                    <div className="w-24 h-24 bg-ai-warning/20 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
+                      <AlertTriangle className="h-12 w-12 text-ai-warning" />
                     </div>
-                    <h3 className="text-2xl font-bold mb-2 font-mono text-white">! THREAT_DETECTED</h3>
-                    <div className={`text-sm font-medium mb-4 font-mono ${getRiskColor(scenario.riskLevel)}`}>
-                      RISK_LEVEL: {scenario.riskLevel}
+                    <h3 className="text-2xl font-bold mb-2">Potentially Harmful Response</h3>
+                    <div className={`text-sm font-medium mb-4 ${getRiskColor(scenario.riskLevel)}`}>
+                      Risk Level: {scenario.riskLevel}
                     </div>
-                    <div className="terminal bg-red-900/20 border-2 border-red-500/30 rounded-xl p-6 max-w-3xl mx-auto">
-                      <div className="text-red-400 font-mono text-sm mb-2">
-                        [ALERT] Potentially harmful content generated:
-                      </div>
-                      <p className="text-red-300 font-medium italic font-mono">"{scenario.unsafeResponse}"</p>
+                    <div className="bg-ai-warning/10 border-2 border-ai-warning/30 rounded-xl p-6 max-w-3xl mx-auto">
+                      <p className="text-ai-warning font-medium italic">"{scenario.unsafeResponse}"</p>
                     </div>
-                    <div className="mt-4 flex items-center justify-center text-red-400 font-mono">
+                    <div className="mt-4 flex items-center justify-center text-ai-warning">
                       <AlertTriangle className="h-5 w-5 mr-2" />
-                      <span className="text-sm">// WARNING: Content violates safety protocols</span>
+                      <span className="text-sm">This response could cause harm or legal issues</span>
                     </div>
                   </div>
                 </div>
@@ -258,42 +171,35 @@ const ProductDemo = () => {
                   animationPhase === 3 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8'
                 }`}>
                   <div className="text-center">
-                    <div className="w-24 h-24 bg-neon-purple/20 rounded-lg flex items-center justify-center mx-auto mb-6 animate-ai-shield border border-neon-purple/50">
-                      <Shield className="h-12 w-12 text-neon-purple" />
+                    <div className="w-24 h-24 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 animate-ai-shield">
+                      <Shield className="h-12 w-12 text-primary" />
                     </div>
-                    <h3 className="text-2xl font-bold mb-6 font-mono text-white">&gt;&gt;&gt; KNACKHOOK_ENGAGED</h3>
+                    <h3 className="text-2xl font-bold mb-6">KnackHook Protection Active</h3>
                     
                     {/* Analysis Grid */}
                     <div className="grid md:grid-cols-2 gap-4 max-w-2xl mx-auto mb-6">
                       {[
-                        'neural_scan.exe',
-                        'legal_check.py', 
-                        'bias_detect.js',
-                        'safety_filter.cpp'
+                        'Hallucination Detection',
+                        'Legal Risk Assessment', 
+                        'Bias Analysis',
+                        'Content Safety Check'
                       ].map((check, i) => (
-                        <div key={i} className="terminal rounded-lg p-4 border border-terminal-green/30 relative overflow-hidden">
+                        <div key={i} className="bg-background rounded-lg p-4 border border-primary/30 relative overflow-hidden">
                           <div className="flex items-center justify-between">
-                            <span className="text-sm font-medium font-mono text-terminal-green">{check}</span>
+                            <span className="text-sm font-medium">{check}</span>
                             <div className="flex items-center">
-                              <div className="w-2 h-2 bg-terminal-green rounded-full animate-pulse mr-2"></div>
-                              <CheckCircle className="h-4 w-4 text-terminal-green" />
+                              <div className="w-2 h-2 bg-primary rounded-full animate-pulse mr-2"></div>
+                              <CheckCircle className="h-4 w-4 text-primary" />
                             </div>
                           </div>
-                          <div className="text-xs text-gray-400 mt-1 font-mono">
-                            {i === 0 && "Scanning neural pathways..."}
-                            {i === 1 && "Analyzing legal compliance..."}
-                            {i === 2 && "Detecting cognitive biases..."}
-                            {i === 3 && "Running safety protocols..."}
-                          </div>
-                          <div className="absolute bottom-0 left-0 h-1 bg-terminal-green/20 w-full">
+                          <div className="absolute bottom-0 left-0 h-1 bg-primary/20 w-full">
                             <div 
-                              className="h-full bg-terminal-green transition-all duration-1000 ease-out"
+                              className="h-full bg-primary transition-all duration-1000 ease-out"
                               style={{
                                 width: '100%',
                                 transformOrigin: 'left',
                                 transform: 'scaleX(1)',
-                                transitionDelay: `${i * 0.5}s`,
-                                boxShadow: '0 0 10px hsl(var(--terminal-green) / 0.5)'
+                                transitionDelay: `${i * 0.3}s`
                               }}
                             />
                           </div>
@@ -301,9 +207,9 @@ const ProductDemo = () => {
                       ))}
                     </div>
                     
-                    <div className="flex items-center justify-center font-mono">
-                      <Filter className="h-6 w-6 text-neon-purple mr-2" />
-                      <span className="text-neon-purple font-medium">// Neutralizing threats...</span>
+                    <div className="flex items-center justify-center">
+                      <Filter className="h-6 w-6 text-primary mr-2" />
+                      <span className="text-primary font-medium">Filtering harmful content...</span>
                     </div>
                   </div>
                 </div>
@@ -313,19 +219,16 @@ const ProductDemo = () => {
                   animationPhase === 4 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8'
                 }`}>
                   <div className="text-center">
-                    <div className="w-24 h-24 bg-terminal-green/20 rounded-lg flex items-center justify-center mx-auto mb-6 animate-pulse border border-terminal-green/50">
-                      <CheckCircle className="h-12 w-12 text-terminal-green" />
+                    <div className="w-24 h-24 bg-ai-safe/20 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
+                      <CheckCircle className="h-12 w-12 text-ai-safe" />
                     </div>
-                    <h3 className="text-2xl font-bold mb-4 font-mono text-white">✓ SAFE_OUTPUT_DELIVERED</h3>
-                    <div className="terminal bg-terminal-green/10 border-2 border-terminal-green/30 rounded-xl p-6 max-w-3xl mx-auto">
-                      <div className="text-terminal-green font-mono text-sm mb-2">
-                        [SUCCESS] Sanitized response generated:
-                      </div>
-                      <p className="text-white font-medium font-mono">"{scenario.safeResponse}"</p>
+                    <h3 className="text-2xl font-bold mb-4">Safe Response Delivered</h3>
+                    <div className="bg-ai-safe/10 border-2 border-ai-safe/30 rounded-xl p-6 max-w-3xl mx-auto">
+                      <p className="text-ai-safe font-medium">"{scenario.safeResponse}"</p>
                     </div>
-                    <div className="mt-4 flex items-center justify-center text-terminal-green font-mono">
+                    <div className="mt-4 flex items-center justify-center text-ai-safe">
                       <CheckCircle className="h-5 w-5 mr-2" />
-                      <span className="text-sm">// Response verified: ethically compliant</span>
+                      <span className="text-sm">Responsible, legally compliant response</span>
                     </div>
                   </div>
                 </div>
@@ -335,32 +238,27 @@ const ProductDemo = () => {
                   animationPhase === 5 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8'
                 }`}>
                   <div className="text-center">
-                    <div className="w-24 h-24 bg-gradient-cyber rounded-lg flex items-center justify-center mx-auto mb-6 animate-pulse-glow border border-terminal-green">
-                      <Shield className="h-12 w-12 text-terminal-green" />
+                    <div className="w-24 h-24 bg-gradient-primary rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse-glow">
+                      <Shield className="h-12 w-12 text-primary-foreground" />
                     </div>
-                    <h3 className="text-2xl font-bold mb-4 font-mono text-white">&gt;&gt;&gt; MISSION_COMPLETE</h3>
-                    <div className="terminal rounded-xl p-6 max-w-2xl mx-auto">
-                      <div className="grid grid-cols-3 gap-4 text-center font-mono">
+                    <h3 className="text-2xl font-bold mb-4">Protection Complete</h3>
+                    <div className="bg-gradient-card rounded-xl p-6 max-w-2xl mx-auto">
+                      <div className="grid grid-cols-3 gap-4 text-center">
                         <div>
-                          <div className="text-2xl font-bold text-terminal-green">✓</div>
-                          <div className="text-sm text-gray-400">threat_neutralized</div>
+                          <div className="text-2xl font-bold text-primary">✓</div>
+                          <div className="text-sm text-muted-foreground">Risk Eliminated</div>
                         </div>
                         <div>
-                          <div className="text-2xl font-bold text-neon-blue">&lt;42ms</div>
-                          <div className="text-sm text-gray-400">execution_time</div>
+                          <div className="text-2xl font-bold text-accent">&lt;50ms</div>
+                          <div className="text-sm text-muted-foreground">Processing Time</div>
                         </div>
                         <div>
-                          <div className="text-2xl font-bold text-terminal-green">100%</div>
-                          <div className="text-sm text-gray-400">safety_score</div>
+                          <div className="text-2xl font-bold text-ai-safe">100%</div>
+                          <div className="text-sm text-muted-foreground">Safe Response</div>
                         </div>
                       </div>
-                      <div className="mt-4 text-sm text-terminal-green">
-                        [INFO] System ready for next query...
-                      </div>
                     </div>
-                    {!isManualMode && (
-                      <p className="text-gray-400 mt-4 font-mono">// Auto-cycling to next scenario...</p>
-                    )}
+                    <p className="text-muted-foreground mt-4">Next scenario loading...</p>
                   </div>
                 </div>
 
